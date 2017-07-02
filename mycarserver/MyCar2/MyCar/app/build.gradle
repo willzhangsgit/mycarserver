@@ -1,0 +1,99 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "fancy.mycar"
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+    }
+
+
+
+    signingConfigs {
+    }
+
+
+    sourceSets {
+        main {
+            //jni库的调用会到资源文件夹下libs里面找so文件
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles 'proguard-project.txt'
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //signingConfig signingConfigs.sign // 签名配置
+
+            android.applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    //output.outputFile = new File(output.outputFile.parent, "乐乐控" + "-" + buildType.name + "-versionName" +
+                            //defaultConfig.versionName + "-versionCode" + defaultConfig.versionCode + releaseTime() + ".apk");
+                    output.outputFile = new File(output.outputFile.parent, "乐乐控" + "-" + buildType.name + "-versionName" +
+                    defaultConfig.versionName + "-versionCode" + defaultConfig.versionCode + ".apk");
+                }
+            }
+        }
+        debug {
+            //signingConfig signingConfigs.sign
+        }
+    }
+}
+
+
+repositories {
+    jcenter()
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    compile files('libs/EZOpenSDK.jar')
+    compile files('libs/txrtmpsdk.jar')
+    compile files('libs/volley.jar')
+    compile files('libs/httpmime-4.2.5.jar')
+}
+
+
+
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd-HH-mm-ss", TimeZone.getTimeZone("UTC"))
+}
+//rootProject.file(): 取得根目錄中的檔案
+//willtest begin
+//def ksFile = rootProject.file('keystore.properties')
+//def props = new Properties();
+//if (ksFile.canRead()) {
+//    props.load(new FileInputStream(ksFile))
+//
+//    if (props != null) {
+//        android.signingConfigs.sign.storeFile file(props['KEYSTORE_FILE'])
+//        android.signingConfigs.sign.storePassword props['KEYSTORE_PASSWORD']
+//        android.signingConfigs.sign.keyAlias props['KEYSTORE_ALIAS']
+//        android.signingConfigs.sign.keyPassword props['KEYSTORE_ALIAS_PASSWORD']
+//    } else {
+//        println 'some entries in \'keystore.properties\' not found!'
+//    }
+//} else {
+//    println '\'keystore.properties\' not found!'
+//}
+
+//willtest end
+

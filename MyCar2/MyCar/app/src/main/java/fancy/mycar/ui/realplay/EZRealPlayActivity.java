@@ -575,6 +575,16 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         }
 
         mScreenOrientationHelper = null;
+		
+		try {
+            //释放操作按钮
+            stopMove();
+            socketWriter.close();
+            finish();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //System.exit(0);
     }
 
    private void  exit(){

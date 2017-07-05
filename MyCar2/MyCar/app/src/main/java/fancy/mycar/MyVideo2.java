@@ -31,14 +31,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.videogo.constant.*;
+import com.videogo.constant.IntentConsts;
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.exception.BaseException;
 import com.videogo.exception.ErrorCode;
@@ -50,6 +49,7 @@ import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LogUtil;
 import com.videogo.util.Utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,6 +57,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -123,6 +124,7 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	private String mTocken = "";
 
 	public RequestQueue mQueue;
+	public List<ets_cis_config> lconfigs = new ArrayList<ets_cis_config>();
 
 	private Handler mHandler = new Handler() {
 		@Override
@@ -179,47 +181,51 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	}
 
 	private void testServer() {
-//		String servname = "http://127.0.0.1:8091/MyCarServer1/user/getAllUser/";
-////		String servname = "http://172.18.66.27:8080/NS/servlet/ScheServlet";
-//		JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
-//			@Override
-//			public void onResponse(JSONObject jsonObject) {
-//				Log.v("data...", jsonObject.toString());
-//				try {
-////					String result = jsonObject.getString("resultCode");
-////					if(result.equals("1")){
-////						JSONObject realData = jsonObject.getJSONObject("data").getJSONObject("doctorShedule");
-//						ets_cis_config schedule = new Gson().fromJson(jsonObject.toString(), ets_cis_config.class);
-//						Log.i("data...",schedule.toString());
-////					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}, new Response.ErrorListener() {
-//			@Override
-//			public void onErrorResponse(VolleyError volleyError) {
-//				Log.v("data...","");
-//			}
-//		});
-		try {
-			StringRequest stringRequest = new StringRequest("http://192.168.1.105:8091/MyCarServer1/user/getAllUser",
-					new Response.Listener<String>() {
-						@Override
-						public void onResponse(String response) {
-							Log.d("TAG", "gw test it");
-						}
-					}, new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					Log.e("TAG", error.getMessage(), error);
-				}
-			});
+		String servname = "http://10.111.11.34:8091/MyCarServer1/user/getAllUser";
+//		String servname = "http://172.18.66.27:8080/NS/servlet/ScheServlet";
+		JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
+			@Override
+			public void onResponse(JSONObject jsonObject) {
+				Log.v("data...", jsonObject.toString());
+				try{
+					String result = jsonObject.getString("resultCode");
+					if(result.equals("1")){
+						JSONArray realData = jsonObject.getJSONObject("data").getJSONArray("userList");
+						lconfigs = new Gson().fromJson(realData.toString(), new TypeToken<List<ets_cis_config>>(){}.getType());
+						Log.i("data...",lconfigs.toString());
 
-			mQueue.add(stringRequest);
-		}catch (Exception ex){
-			String exerr = ex.getMessage();
-		}
+					}
+				}catch (JSONException e){
+					e.printStackTrace();
+				}
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError volleyError) {
+				Log.v("data...","");
+			}
+		});
+
+		mQueue.add(request);
+
+//		try {
+//			StringRequest stringRequest = new StringRequest("http://10.111.11.34:8091/MyCarServer1/user/getAllUser",
+//					new Response.Listener<String>() {
+//						@Override
+//						public void onResponse(String response) {
+//							Log.d("TAG", "gw test it");
+//						}
+//					}, new Response.ErrorListener() {
+//				@Override
+//				public void onErrorResponse(VolleyError error) {
+//					Log.e("TAG", error.getMessage(), error);
+//				}
+//			});
+//
+//			mQueue.add(stringRequest);
+//		}catch (Exception ex){
+//			String exerr = ex.getMessage();
+//		}
 	}
 
 	private void initTocken() {

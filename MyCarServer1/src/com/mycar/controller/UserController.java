@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mycar.bo.*;
 import com.mycar.service.UserService;
 
@@ -28,18 +27,16 @@ public class UserController {
 
 	@RequestMapping("/getAllUser")
 	@ResponseBody
-	public StdOut getAllUser(HttpServletRequest request){
+	public String getAllUser(HttpServletRequest request){
 		
 		List<ets_cis_config> findAll = userService.findAll();
 		
 		request.setAttribute("userList", findAll);
 		
-		StdOut sto = new StdOut();
-		sto.setResultCode(1);
-		sto.setResultMessage("");
-		sto.addData("userList", findAll);
+		Gson gson = new Gson();
+		String users = gson.toJson(findAll);
 		
-		return sto;
+		return users;
 	}
 	
 

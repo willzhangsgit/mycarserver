@@ -8,15 +8,15 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -43,10 +43,10 @@ public class MyLogin_FRM extends Activity {
 
 	public RequestQueue mQueue;
 
-	private static final String APPID = "1105233460";
 	private Tencent mTencent;
 	private IUiListener loginListener;
 	private String scope;
+	private IWXAPI mWXapi;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +55,12 @@ public class MyLogin_FRM extends Activity {
 		mQueue = Volley.newRequestQueue(this);
 		initapi();
 		initControl();
-		//testServer();
+		initConfig();
 	}
 
 	private void initapi() {
-		mTencent = Tencent.createInstance(APPID, MyLogin_FRM.this);
+		//qq begin
+		mTencent = Tencent.createInstance(Constant.QQ_APPID, MyLogin_FRM.this);
 		//要所有权限，不用再次申请增量权限，这里不要设置成get_user_info,add_t
 		scope = "all";
 		loginListener = new IUiListener() {
@@ -110,6 +111,10 @@ public class MyLogin_FRM extends Activity {
 
 			}
 		};
+
+		//wx begin
+		mWXapi = WXAPIFactory.createWXAPI(this, Constant.WX_APPID, true);
+		mWXapi.registerApp(Constant.WX_APPID);
 	}
 
 	private void initControl() {
@@ -123,6 +128,25 @@ public class MyLogin_FRM extends Activity {
 				QQLogin();
 			}
 		});
+
+		btnWX.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				WXLogin();
+			}
+		});
+	}
+
+	private void WXLogin() {
+		try {
+			SendAuth.Req req = new SendAuth.Req();
+			req.scope = "snsapi_userinfo";
+			req.state = "none";
+			boolean wxlogin = mWXapi.sendReq(req);
+			Log.d("wxlogin", "test");
+		}catch (Exception ex){
+			String err = ex.getMessage();
+		}
 	}
 
 	private void QQLogin() {
@@ -131,48 +155,8 @@ public class MyLogin_FRM extends Activity {
 		}
 	}
 
-	private void testServer() {
-//		String servname = "http://127.0.0.1:8091/MyCarServer1/user/getAllUser/";
-////		String servname = "http://172.18.66.27:8080/NS/servlet/ScheServlet";
-//		JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
-//			@Override
-//			public void onResponse(JSONObject jsonObject) {
-//				Log.v("data...", jsonObject.toString());
-//				try {
-////					String result = jsonObject.getString("resultCode");
-////					if(result.equals("1")){
-////						JSONObject realData = jsonObject.getJSONObject("data").getJSONObject("doctorShedule");
-//						ets_cis_config schedule = new Gson().fromJson(jsonObject.toString(), ets_cis_config.class);
-//						Log.i("data...",schedule.toString());
-////					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}, new Response.ErrorListener() {
-//			@Override
-//			public void onErrorResponse(VolleyError volleyError) {
-//				Log.v("data...","");
-//			}
-//		});
-		try {
-			StringRequest stringRequest = new StringRequest("http://192.168.1.105:8091/MyCarServer1/user/getAllUser",
-					new Response.Listener<String>() {
-						@Override
-						public void onResponse(String response) {
-							Log.d("TAG", "gw test it");
-						}
-					}, new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					Log.e("TAG", error.getMessage(), error);
-				}
-			});
+	private void initConfig() {
 
-			mQueue.add(stringRequest);
-		} catch (Exception ex) {
-			String exerr = ex.getMessage();
-		}
 	}
 
 	private String goLogin() {

@@ -26,12 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -49,9 +43,6 @@ import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LogUtil;
 import com.videogo.util.Utils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -62,7 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fancy.mycar.bo.ets_cis_config;
 import fancy.mycar.ui.cameralist.EZCameraListAdapter;
 import fancy.mycar.ui.cameralist.SelectCameraDialog;
 import fancy.mycar.ui.realplay.EZRealPlayActivity;
@@ -121,9 +111,6 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 
 	private String mTocken = "";
 
-	public RequestQueue mQueue;
-	public List<ets_cis_config> configs;
-
 	private Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -169,7 +156,6 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.myvideo2);
-		mQueue = Volley.newRequestQueue(this);
 		initData();
 		initView();
 		new Thread(tockeninitTask).start();
@@ -179,28 +165,6 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	}
 
 	private void testServer() {
-		String servname = "http://10.111.11.34:8091/MyCarServer1/config/getAllConfig/";
-		JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
-			@Override
-			public void onResponse(JSONObject jsonObject) {
-				Log.v("data...", jsonObject.toString());
-				try {
-					String result = jsonObject.getString("resultCode");
-					if(result.equals("1")){
-						JSONArray realData = jsonObject.getJSONObject("data").getJSONArray("configList");
-						configs = new Gson().fromJson(realData.toString(), new TypeToken<List<ets_cis_config>>(){}.getType());
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError volleyError) {
-				Log.v("data...","");
-			}
-		});
-
 //		try {
 //			StringRequest stringRequest = new StringRequest("http://192.168.1.105:8091/MyCarServer1/user/getAllUser",
 //					new Response.Listener<String>() {
@@ -219,6 +183,7 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 //		}catch (Exception ex){
 //			String exerr = ex.getMessage();
 //		}
+
 	}
 
 	private void initTocken() {

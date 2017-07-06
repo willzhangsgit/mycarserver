@@ -5,27 +5,26 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.tencent.tauth.IUiListener;
-import com.tencent.tauth.Tencent;
-import com.tencent.tauth.UiError;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import fancy.mycar.bo.ets_cis_config;
 import fancy.mycar.ui.util.HttpUtil;
 
 /**
@@ -33,89 +32,44 @@ import fancy.mycar.ui.util.HttpUtil;
  */
 
 public class MyLogin_FRM extends Activity {
-	protected static final String TAG = "CameraListActivity";
-
-	public final static int TAG_CLICK_PLAY = 1;
-	public final static int TAG_CLICK_REMOTE_PLAY_BACK = 2;
-
-
-	private final static int LOAD_MY_DEVICE = 0;
-
-	public RequestQueue mQueue;
-
-	private Tencent mTencent;
-	private IUiListener loginListener;
-	private String scope;
-	private IWXAPI mWXapi;
+	protected static final String TAG = "MyLogin_FRM";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mylogin_frm);
-		mQueue = Volley.newRequestQueue(this);
-		initapi();
 		initControl();
+
 		initConfig();
 	}
 
-	private void initapi() {
-		//qq begin
-		mTencent = Tencent.createInstance(Constant.QQ_APPID, MyLogin_FRM.this);
-		//要所有权限，不用再次申请增量权限，这里不要设置成get_user_info,add_t
-		scope = "all";
-		loginListener = new IUiListener() {
-
+	private void initConfig() {
+		String servname = "http://10.111.11.34:8091/MyCarServer1/config/getAllConfig/";
+		JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
 			@Override
-			public void onError(UiError arg0) {
-				// TODO Auto-generated method stub
-				String strerr = arg0.errorMessage;
-			}
-
-			@Override
-			public void onComplete(Object value) {
-				// TODO Auto-generated method stub
-
-				System.out.println("有数据返回..");
-				if (value == null) {
-					return;
-				}
-
+			public void onResponse(JSONObject jsonObject) {
+				Log.v("data...", jsonObject.toString());
 				try {
-					JSONObject jo = (JSONObject) value;
-
-					String msg = jo.getString("msg");
-
-					System.out.println("json=" + String.valueOf(jo));
-
-					System.out.println("msg="+msg);
-					if ("sucess".equals(msg)) {
-						Toast.makeText(MyLogin_FRM.this, "登录成功",
-								Toast.LENGTH_LONG).show();
-
-						String openID = jo.getString("openid");
-						String accessToken = jo.getString("access_token");
-						String expires = jo.getString("expires_in");
-						mTencent.setOpenId(openID);
-						mTencent.setAccessToken(accessToken, expires);
+					String result = jsonObject.getString("resultCode");
+					if(result.equals("1")){
+						JSONArray realData = jsonObject.getJSONObject("data").getJSONArray("configList");
+						EzvizApplication.configs = new Gson().fromJson(realData.toString(), new TypeToken<List<ets_cis_config>>(){}.getType());
+						Log.i("configs", EzvizApplication.configs.toString());
 					}
-
 				} catch (Exception e) {
-					// TODO: handle exception
+					e.printStackTrace();
 				}
-
 			}
-
+		}, new Response.ErrorListener() {
 			@Override
-			public void onCancel() {
-				// TODO Auto-generated method stub
-
+			public void onErrorResponse(VolleyError volleyError) {
+				Log.v("data...","");
 			}
-		};
+		});
 
-		//wx begin
-		mWXapi = WXAPIFactory.createWXAPI(this, Constant.WX_APPID, true);
-		mWXapi.registerApp(Constant.WX_APPID);
+		EzvizApplication.getReqQueue().add(request);
 	}
+
 
 	private void initControl() {
 		Button btnGeneal = (Button) this.findViewById(R.id.button1);
@@ -142,7 +96,7 @@ public class MyLogin_FRM extends Activity {
 			SendAuth.Req req = new SendAuth.Req();
 			req.scope = "snsapi_userinfo";
 			req.state = "none";
-			boolean wxlogin = mWXapi.sendReq(req);
+			boolean wxlogin = EzvizApplication.mWXapi.sendReq(req);
 			Log.d("wxlogin", "test");
 		}catch (Exception ex){
 			String err = ex.getMessage();
@@ -150,13 +104,9 @@ public class MyLogin_FRM extends Activity {
 	}
 
 	private void QQLogin() {
-		if (!mTencent.isSessionValid()) {
-			mTencent.login(MyLogin_FRM.this, scope, loginListener);
+		if (!EzvizApplication.mTencent.isSessionValid()) {
+			EzvizApplication.mTencent.login(MyLogin_FRM.this, EzvizApplication.scope, EzvizApplication.loginListener);
 		}
-	}
-
-	private void initConfig() {
-
 	}
 
 	private String goLogin() {

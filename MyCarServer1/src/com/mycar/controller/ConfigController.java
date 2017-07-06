@@ -27,7 +27,7 @@ public class ConfigController {
 
 	@RequestMapping("/getAllConfig")
 	@ResponseBody
-	public String getAllConfig(HttpServletRequest request){
+	public WsOut getAllConfig(HttpServletRequest request){
 		
 		List<ets_cis_config> findAll = configService.findAll();
 		
@@ -36,7 +36,11 @@ public class ConfigController {
 		Gson gson = new Gson();
 		String configs = gson.toJson(findAll);
 		
-		return configs;
+		WsOut wo = new WsOut();
+		wo.setResultCode(1);
+		wo.addData("configList", findAll);
+		
+		return wo;
 	}
 	
 

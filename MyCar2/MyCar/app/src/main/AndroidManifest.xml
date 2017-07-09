@@ -47,6 +47,10 @@
             android:name="fancy.mycar.ui.realplay.EZRealPlayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="fancy.mycar.RegisterActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name="com.tencent.tauth.AuthActivity"

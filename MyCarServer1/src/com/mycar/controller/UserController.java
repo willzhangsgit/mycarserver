@@ -1,6 +1,7 @@
 package com.mycar.controller;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -9,12 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.mycar.bo.*;
 import com.mycar.service.UserService;
+import com.mycar.util.HttpUtil;
 
 
 @Controller
@@ -29,7 +32,7 @@ public class UserController {
 	@ResponseBody
 	public String getAllUser(HttpServletRequest request){
 		
-		List<ets_cis_config> findAll = userService.findAll();
+		List<UserEnrollment> findAll = userService.findAll();
 		
 		request.setAttribute("userList", findAll);
 		
@@ -46,16 +49,35 @@ public class UserController {
 		return "/addUser";
 	}
 
-	@RequestMapping("/addUser")
-	public String addUser(ets_cis_config user,HttpServletRequest request){
-/*		userService.save(user);
-		return "redirect:/user/getAllUser";*/
+	@RequestMapping("/reg")
+	@ResponseBody
+	public WsOut regUser(HttpServletRequest request){
+		try {
+			InputStreamReader isr;
+			isr = new InputStreamReader(request.getInputStream(), "utf-8");
+			Gson gson = new Gson();
+			UserEnrollment u = gson.fromJson(isr, UserEnrollment.class);
+
+			if(u.getAccounts()!=null && !u.getAccounts().equals("")){
+				WsOut sysuser = searchUser(u.getAccounts(), u.getPhone());
+				if(sysuser.getResultCode() != 1){
+					return sysuser;
+				}
+			
+				WsOut regrtn = userService.reg(u);
+				return regrtn;
+			}else{
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
 
 	@RequestMapping("/updateUser")
-	public String updateUser(ets_cis_config user,HttpServletRequest request){
+	public String updateUser(UserEnrollment user,HttpServletRequest request){
 		
 		
 /*		if(userService.update(user)){
@@ -71,12 +93,36 @@ public class UserController {
 	@RequestMapping("/getUser")
 	@ResponseBody
 	public String getUser(String id,HttpServletRequest request){
-		ets_cis_config ecs = userService.findById(String.valueOf(id));
+		UserEnrollment ecs = userService.findById(String.valueOf(id));
 		request.setAttribute("user", ecs);
 		if(ecs == null)
 			return "查无此记录";
 		
-		return ecs.cfg_desc;
+		return ecs.getAccounts();
+	}
+	
+	@RequestMapping("/getUserByC/{account}/{phoneno}")
+	@ResponseBody
+	public WsOut getUser(@PathVariable String account, @PathVariable String phoneno){
+		return searchUser(account, phoneno);
+	}
+
+
+	private WsOut searchUser(String account, String phoneno) {
+		WsOut rtnWo = new WsOut();
+		rtnWo.setResultCode(1);
+		List<UserEnrollment> findAc = userService.findUserByAccount(account);
+		if(findAc.size() > 0){
+			rtnWo.setResultCode(-2);
+			rtnWo.setResultMessage("用户名已注册");
+		}
+		List<UserEnrollment> findPhone = userService.findUserByPhone(phoneno);
+		if(findAc.size() > 0){
+			rtnWo.setResultCode(-3);
+			rtnWo.setResultMessage("手机号已注册");
+		}
+		
+		return rtnWo;
 	}
 
 	@RequestMapping("/delUser")
@@ -96,5 +142,15 @@ public class UserController {
 			e.printStackTrace();
 		}*/
 
+	}
+	
+	@RequestMapping("/sendVerifyCode/{phoneno}")
+	@ResponseBody
+	public String sendVerifyCode(@PathVariable String phoneno){
+		System.out.println(phoneno + "发送注册短信");
+		HttpUtil httpRequest = new HttpUtil();
+		httpRequest.getBalance("POST");
+		httpRequest.sendSms("POST");
+		return "1";
 	}
 }

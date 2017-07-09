@@ -1,10 +1,12 @@
 package fancy.mycar.bo;
 
+import java.io.Serializable;
+
 /**
  * Created by Will on 2017/7/1.
  */
 
-public class ets_cis_config {
+public class ets_cis_config implements Serializable {
 	public String cfg_id;
 	public String cfg_name;
 	public String cfg_desc;

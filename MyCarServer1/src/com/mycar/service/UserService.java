@@ -7,6 +7,9 @@ import com.mycar.bo.*;
 
 
 public interface UserService {
-	ets_cis_config findById(String id);
-	List<ets_cis_config> findAll();
+	UserEnrollment findById(String id);
+	List<UserEnrollment> findAll();
+	List<UserEnrollment> findUserByAccount(String acc);
+	List<UserEnrollment> findUserByPhone(String phone);
+	WsOut reg(UserEnrollment user);
 }

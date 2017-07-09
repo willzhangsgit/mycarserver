@@ -21,15 +21,34 @@ public class UserServiceImpl implements UserService {
 	@Resource
 	private userMapper mapper;
 
-	public List<ets_cis_config> findAll() {
-		List<ets_cis_config> findAllList = mapper.findAll();
+	public List<UserEnrollment> findAll() {
+		List<UserEnrollment> findAllList = mapper.findAll();
 		return findAllList;
 	}
 
-	public ets_cis_config findById(String id) {
+	public UserEnrollment findById(String id) {
 
-		ets_cis_config user = mapper.findById(String.valueOf(id));
+		UserEnrollment user = mapper.findById(String.valueOf(id));
 		
 		return user;
+	}
+	
+	public List<UserEnrollment> findUserByAccount(String Acc) {
+		List<UserEnrollment> findAllList = mapper.findByAccount(Acc);
+		return findAllList;
+	}
+	
+	public List<UserEnrollment> findUserByPhone(String Phone) {
+		List<UserEnrollment> findAllList = mapper.findByPhone(Phone);
+		return findAllList;
+	}
+	
+	public WsOut reg(UserEnrollment user){
+		WsOut wrtn = new WsOut();
+		int rtnReg = mapper.reg(user);
+		wrtn.setResultCode(1);
+		wrtn.setResultMessage("×¢²á³É¹¦");
+		wrtn.addData("regrtn", String.valueOf(rtnReg));
+		return wrtn;
 	}
 }

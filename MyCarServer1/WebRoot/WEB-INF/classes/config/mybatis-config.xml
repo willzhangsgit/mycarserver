@@ -5,9 +5,12 @@
 
 	<!-- 实体类,简称 -设置别名 -->
 	<typeAliases>
+		<package name="com.mycar.bo"/>
+		<!-- 
 		<typeAlias alias="ets_cis_config" type="com.mycar.bo.ets_cis_config" />
 		<typeAlias alias="GameInfo" type="com.mycar.bo.GameInfo" />
 		<typeAlias alias="St_city" type="com.mycar.bo.St_city" />
+		-->
 	</typeAliases>
 	<!-- 实体接口映射资源 -->
 	<!--

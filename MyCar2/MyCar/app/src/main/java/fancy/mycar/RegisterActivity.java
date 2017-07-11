@@ -32,6 +32,7 @@ public class RegisterActivity extends Activity {
 	String strVerifyCode;
 	private Button btnYzm,btnRegister;
 	private EditText etPhoneNo,etNickName,etPassword,etAddress,etZipcode,etReceiver,etMailAddress;
+	private EditText etVerifyCode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class RegisterActivity extends Activity {
 		etMailAddress = (EditText) findViewById(R.id.mailaddress);
 		etZipcode = (EditText) findViewById(R.id.zipcode);
 		etReceiver = (EditText) findViewById(R.id.receiver);
+		etVerifyCode = (EditText) findViewById(R.id.etyzm);
 
 		btnYzm.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -78,8 +80,9 @@ public class RegisterActivity extends Activity {
 	private void sendVerifyCode(View v) {
 		String servname = "http://" + Constant.GwServer + "/MyCarServer1/user/sendVerifyCode/";
 		String phoneno = etPhoneNo.getText().toString();
-		v.setEnabled(false);
+		//v.setEnabled(false);
 		btnYzm.setText("获取中");
+		//servname = servname + phoneno;
 		servname = servname + phoneno;
 		Log.i("sendverify", servname);
 		JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
@@ -90,6 +93,8 @@ public class RegisterActivity extends Activity {
 					String result = jsonObject.getString("resultCode");
 					if(result.equals("1")){
 						JSONArray realData = jsonObject.getJSONObject("data").getJSONArray("verifyCode");
+						strVerifyCode = realData.toString();
+						Log.i("get verifycode success:", strVerifyCode);
 						new Thread(task).start();
 						Toast.makeText(RegisterActivity.this, "已将6位验证码发送至您的手机!", Toast.LENGTH_SHORT).show();
 					}
@@ -144,11 +149,11 @@ public class RegisterActivity extends Activity {
 	private void RegUser(){
 		try {
 			String service = "http://" + Constant.GwServer + "/MyCarServer1/user/reg/";
-//			String verifycode = etVerifyCode.getText().toString();
-//			if (!verifycode.equals(strVerifyCode)) {
-//				Toast.makeText(RegisterActivity.this, "验证码错误!", Toast.LENGTH_SHORT).show();
-//				return;
-//			}
+			String verifycode = etVerifyCode.getText().toString();
+			if (!verifycode.equals(strVerifyCode)) {
+				Toast.makeText(RegisterActivity.this, "验证码错误!", Toast.LENGTH_SHORT).show();
+				return;
+			}
 			btnRegister.setEnabled(false);
 
 			final String nickname = etNickName.getText().toString();
@@ -214,7 +219,7 @@ public class RegisterActivity extends Activity {
 	}
 
 	private void inittest() {
-		etPhoneNo.setText("13111111111");
+		etPhoneNo.setText("13166029815");
 		etNickName.setText("willzhang");
 		etPassword.setText("111111");
 		etAddress.setText("测试地址");

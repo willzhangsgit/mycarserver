@@ -146,11 +146,21 @@ public class UserController {
 	
 	@RequestMapping("/sendVerifyCode/{phoneno}")
 	@ResponseBody
-	public String sendVerifyCode(@PathVariable String phoneno){
+	public WsOut sendVerifyCode(@PathVariable String phoneno){
 		System.out.println(phoneno + "发送注册短信");
+		WsOut rtnWo = new WsOut();
 		HttpUtil httpRequest = new HttpUtil();
-		httpRequest.getBalance("POST");
-		httpRequest.sendSms("POST");
-		return "1";
+		// httpRequest.getBalance("POST");
+		String vcode = httpRequest.sendSms("POST", phoneno);
+		if (vcode != null && vcode != "") {
+			rtnWo.setResultCode(1);
+			rtnWo.setResultMessage("");
+			rtnWo.addData("verifyCode", vcode);
+		} else {
+			rtnWo.setResultCode(-1);
+			rtnWo.setResultMessage("验证码发送失败");
+		}
+
+		return rtnWo;
 	}
 }

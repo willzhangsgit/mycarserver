@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,12 +18,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 
 import fancy.mycar.bo.UserEnrollment;
+import fancy.mycar.ui.util.ActivityUtils;
 
 /**
  * Created by Will on 2017/5/23.
@@ -43,6 +45,14 @@ public class RegisterActivity extends Activity {
 
 		inittest();
 	}
+
+	private Runnable delayRun = new Runnable() {
+		@Override
+		public void run() {
+			etVerifyCode.setText("");
+			strVerifyCode = "";
+		}
+	};
 
 	private void initControl() {
 		btnYzm = (Button) findViewById(R.id.tvget_yzm);
@@ -75,13 +85,34 @@ public class RegisterActivity extends Activity {
 				RegUser();
 			}
 		});
+
+		etPhoneNo.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable editable) {
+				if(delayRun!=null){
+					handler.removeCallbacks(delayRun);
+				}
+
+				handler.postDelayed(delayRun, 500);
+			}
+		});
 	}
 
 	private void sendVerifyCode(View v) {
 		String servname = "http://" + Constant.GwServer + "/MyCarServer1/user/sendVerifyCode/";
 		String phoneno = etPhoneNo.getText().toString();
-		//v.setEnabled(false);
 		btnYzm.setText("获取中");
+		btnYzm.setEnabled(false);
 		//servname = servname + phoneno;
 		servname = servname + phoneno;
 		Log.i("sendverify", servname);
@@ -92,8 +123,7 @@ public class RegisterActivity extends Activity {
 				try {
 					String result = jsonObject.getString("resultCode");
 					if(result.equals("1")){
-						JSONArray realData = jsonObject.getJSONObject("data").getJSONArray("verifyCode");
-						strVerifyCode = realData.toString();
+						strVerifyCode = jsonObject.getJSONObject("data").getString("verifyCode");
 						Log.i("get verifycode success:", strVerifyCode);
 						new Thread(task).start();
 						Toast.makeText(RegisterActivity.this, "已将6位验证码发送至您的手机!", Toast.LENGTH_SHORT).show();
@@ -151,7 +181,7 @@ public class RegisterActivity extends Activity {
 			String service = "http://" + Constant.GwServer + "/MyCarServer1/user/reg/";
 			String verifycode = etVerifyCode.getText().toString();
 			if (!verifycode.equals(strVerifyCode)) {
-				Toast.makeText(RegisterActivity.this, "验证码错误!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(RegisterActivity.this, strVerifyCode + "验证码错误!", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			btnRegister.setEnabled(false);
@@ -163,6 +193,7 @@ public class RegisterActivity extends Activity {
 			String mailaddress = etMailAddress.getText().toString();
 			String zipcode = etZipcode.getText().toString();
 			String receiver = etReceiver.getText().toString();
+			String localip = ActivityUtils.getlocalip(RegisterActivity.this);
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("accounts", nickname);
 			jsonObject.put("phone", phoneno);
@@ -172,6 +203,7 @@ public class RegisterActivity extends Activity {
 			jsonObject.put("mailaddress", mailaddress);
 			jsonObject.put("zipcode", zipcode);
 			jsonObject.put("receiver", receiver);
+			jsonObject.put("registerip", localip);
 
 			JsonRequest request = new JsonObjectRequest(service, jsonObject, new Response.Listener<JSONObject>() {
 				@Override
@@ -193,7 +225,7 @@ public class RegisterActivity extends Activity {
 							setResult(1, intent);
 							finish();
 						} else {
-							Toast.makeText(RegisterActivity.this, jsonObject.getString("resultMessage"), Toast.LENGTH_SHORT).show();
+							Toast.makeText(RegisterActivity.this, "Error:" + jsonObject.getString("resultMessage"), Toast.LENGTH_SHORT).show();
 							btnRegister.setEnabled(true);
 							return;
 						}

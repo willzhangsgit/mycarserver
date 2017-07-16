@@ -74,7 +74,6 @@ public class GameInfo {
 		this.remarks = remarks;
 	}
 
-
 	public GameInfo(String id, String gname, String gtypeid,
 			String processname, String enable, String remarks) {
 		super();

@@ -11,5 +11,6 @@ public class Constant {
     public static final String WX_APPID = "wx197d9f968f89ee05";
 
     //public static final String GwServer = "110.111.11.34:8091";
-    public static final String GwServer = "192.168.1.103:8091";
+    public static final String GwServer = "192.168.1.102:8091";
+    //public static final String GwServer = "www.lelelive.com:8091";
 }

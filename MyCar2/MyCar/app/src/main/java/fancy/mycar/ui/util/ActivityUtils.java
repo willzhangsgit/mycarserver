@@ -16,6 +16,10 @@
 package fancy.mycar.ui.util;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZGlobalSDK;
@@ -75,5 +79,14 @@ public class ActivityUtils {
         }
     }
 
-
+    public static String getlocalip(Activity av)
+    {
+        WifiManager wifiManager = (WifiManager)av.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        int ipAddress = wifiInfo.getIpAddress();
+        Log.d("ip:", "int ip "+ipAddress);
+        if(ipAddress==0)return null;
+        return ((ipAddress & 0xff)+"."+(ipAddress>>8 & 0xff)+"."
+                +(ipAddress>>16 & 0xff)+"."+(ipAddress>>24 & 0xff));
+    }
 }

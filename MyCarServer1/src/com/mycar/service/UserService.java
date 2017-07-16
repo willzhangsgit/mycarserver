@@ -12,4 +12,5 @@ public interface UserService {
 	List<UserEnrollment> findUserByAccount(String acc);
 	List<UserEnrollment> findUserByPhone(String phone);
 	WsOut reg(UserEnrollment user);
+	WsOut login(UserEnrollment user);
 }

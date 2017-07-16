@@ -116,11 +116,14 @@ public class UserController {
 			rtnWo.setResultCode(-2);
 			rtnWo.setResultMessage("用户名已注册");
 		}
+		
+		
 		List<UserEnrollment> findPhone = userService.findUserByPhone(phoneno);
 		if(findAc.size() > 0){
 			rtnWo.setResultCode(-3);
 			rtnWo.setResultMessage("手机号已注册");
 		}
+		
 		
 		return rtnWo;
 	}
@@ -162,5 +165,36 @@ public class UserController {
 		}
 
 		return rtnWo;
+	}
+	
+	@RequestMapping("/login")
+	@ResponseBody
+	public WsOut loginUser(HttpServletRequest request){
+		try {
+			InputStreamReader isr;
+			isr = new InputStreamReader(request.getInputStream(), "utf-8");
+			Gson gson = new Gson();
+			UserEnrollment u = gson.fromJson(isr, UserEnrollment.class);
+
+			if(u.getAccounts()!=null && !u.getAccounts().equals("")){
+				WsOut sysuser = searchUser(u.getAccounts(), u.getPhone());
+				if(sysuser.getResultCode() != 1){
+					return sysuser;
+				}
+			
+				WsOut regrtn = userService.login(u);
+				return regrtn;
+			}else{
+				if(u.getPhone()!=null && !u.getPhone().equals("")){
+					WsOut regrtn = userService.login(u);
+					return regrtn;
+				}else{
+					return null;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

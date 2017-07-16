@@ -51,4 +51,23 @@ public class UserServiceImpl implements UserService {
 		wrtn.addData("regrtn", String.valueOf(rtnReg));
 		return wrtn;
 	}
+	
+	public WsOut login(UserEnrollment user){
+		WsOut wrtn = new WsOut();
+		int rtnReg = mapper.login(user);
+		if(rtnReg < 1){		
+			wrtn.setResultCode(rtnReg);
+			wrtn.setResultMessage("登录失败,错误的用户名或密码");
+			UserEnrollment lUser = new UserEnrollment();
+			lUser.setUserid(rtnReg);
+			wrtn.addData("loginUser", lUser);
+		}else{
+			wrtn.setResultCode(1);
+			wrtn.setResultMessage("登录成功");
+			UserEnrollment lUser = mapper.findById(String.valueOf(rtnReg));
+			wrtn.addData("loginUser", lUser);
+		}
+
+		return wrtn;
+	}
 }

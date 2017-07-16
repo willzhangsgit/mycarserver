@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import fancy.mycar.bo.UserEnrollment;
 import fancy.mycar.bo.ets_cis_config;
 
 /**
@@ -39,7 +40,7 @@ public class EzvizApplication extends Application {
 	public static IUiListener loginListener;
 	public static String scope;
 	public static IWXAPI mWXapi;
-
+	public static UserEnrollment loggedUser;
 
 	@Override
 	public void onCreate() {

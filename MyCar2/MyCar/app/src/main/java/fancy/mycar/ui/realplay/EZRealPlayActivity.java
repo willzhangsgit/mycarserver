@@ -85,7 +85,6 @@ import com.videogo.openapi.EZPlayer;
 import com.videogo.openapi.bean.EZCameraInfo;
 import com.videogo.openapi.bean.EZDeviceInfo;
 import com.videogo.realplay.RealPlayStatus;
-
 import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LocalInfo;
 import com.videogo.util.LogUtil;
@@ -106,7 +105,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.Timer;
@@ -122,6 +120,7 @@ import fancy.mycar.ui.util.DataManager;
 import fancy.mycar.ui.util.EZUtils;
 import fancy.mycar.ui.util.VerifyCodeInput;
 import fancy.mycar.widget.WaitDialog;
+import fancy.mycar.widget.gwMusicService;
 import fancy.mycar.widget.loading.LoadingTextView;
 
 
@@ -364,6 +363,9 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         initData();
         try {
             initView();
+
+            startBackMusic();
+
         }catch(Exception ex){
             String exs = ex.getMessage().toString();
         }
@@ -544,6 +546,8 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
             setStopLoading();
         }
         mRealPlaySv.setVisibility(View.INVISIBLE);
+
+        stopBackMusic();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
 //        client.disconnect();
@@ -579,7 +583,8 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 		try {
             //释放操作按钮
             stopMove();
-            socketWriter.close();
+            if(socketWriter !=null)
+                socketWriter.close();
             finish();
         } catch (IOException e) {
             e.printStackTrace();
@@ -3635,5 +3640,15 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    private void startBackMusic() {
+        Intent intent = new Intent(EZRealPlayActivity.this,gwMusicService.class);
+        startService(intent);
+    }
+
+    private void stopBackMusic(){
+        Intent intent = new Intent(EZRealPlayActivity.this,gwMusicService.class);
+        stopService(intent);
     }
 }

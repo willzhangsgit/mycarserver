@@ -27,7 +27,7 @@ public class GameController {
 
 	@RequestMapping("/getAllGame")
 	@ResponseBody
-	public String getAllUser(HttpServletRequest request){
+	public String getAllGame(HttpServletRequest request){
 		
 		List<GameInfo> findAll = gameService.findAll();
 		
@@ -40,13 +40,13 @@ public class GameController {
 	}
 	
 
-	@RequestMapping("/toAddUser")
-	public String toAddUser(HttpServletRequest request){
+	@RequestMapping("/toAddGame")
+	public String toAddGame(HttpServletRequest request){
 		
 		return "/addUser";
 	}
 
-	@RequestMapping("/addUser")
+	@RequestMapping("/addGame")
 	public String addUser(ets_cis_config user,HttpServletRequest request){
 /*		userService.save(user);
 		return "redirect:/user/getAllUser";*/
@@ -54,7 +54,7 @@ public class GameController {
 	}
 	
 
-	@RequestMapping("/updateUser")
+	@RequestMapping("/updateGame")
 	public String updateUser(ets_cis_config user,HttpServletRequest request){
 		
 		

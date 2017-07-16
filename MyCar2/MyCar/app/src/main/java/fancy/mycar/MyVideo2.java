@@ -26,6 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -43,6 +47,9 @@ import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LogUtil;
 import com.videogo.util.Utils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -53,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fancy.mycar.bo.MachineInfo;
 import fancy.mycar.ui.cameralist.EZCameraListAdapter;
 import fancy.mycar.ui.cameralist.SelectCameraDialog;
 import fancy.mycar.ui.realplay.EZRealPlayActivity;
@@ -491,7 +499,6 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 					mListView.getRefreshableView().removeFooterView(mNoMoreView);
 				}
 				addCameraList(result);
-				mAdapter.notifyDataSetChanged();
 			}
 
 			if (mErrorCode != 0) {
@@ -519,13 +526,51 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 		}
 	}
 
-	private void addCameraList(List<EZDeviceInfo> result) {
-		int count = result.size();
-		EZDeviceInfo item = null;
-		for (int i = 0; i < count; i++) {
-			item = result.get(i);
-			mAdapter.addItem(item);
-		}
+	private void addCameraList(final List<EZDeviceInfo> eresult) {
+		final int count = eresult.size();
+		String servname = "http://" + Constant.GwServer + "/MyCarServer1/machine/getAllMac/";
+		JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
+			@Override
+			public void onResponse(JSONObject jsonObject) {
+				try {
+					String result = jsonObject.getString("resultCode");
+					if(result.equals("1")){
+						JSONArray realData = jsonObject.getJSONObject("data").getJSONArray("macList");
+						List<MachineInfo> lmresult = new Gson().fromJson(realData.toString(), new TypeToken<List<MachineInfo>>(){}.getType());
+						for (int i = 0; i < count; i++) {
+							EZDeviceInfo item = eresult.get(i);
+							mAdapter.addItem(item);
+
+							MachineInfo tmac = null;
+							for(int j=0;j<lmresult.size();j++){
+								String lds = lmresult.get(j).getDeviceSerial();
+								if(lds != null && !lds.equals("")) {
+									if (lds.equals(item.getDeviceSerial())){
+										tmac = lmresult.get(j);
+										break;
+									}
+								}
+							}
+							if(tmac != null) {
+								String scontrol = tmac.getIscontrol().toString();
+								mAdapter.mControlItemMap.put(item.getDeviceSerial(), scontrol);
+							}
+
+							mAdapter.notifyDataSetChanged();
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError volleyError) {
+				Log.v("data...","");
+			}
+		});
+
+		EzvizApplication.getReqQueue().add(request);
 	}
 
 	@Override

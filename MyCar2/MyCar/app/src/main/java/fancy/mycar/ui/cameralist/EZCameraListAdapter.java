@@ -25,7 +25,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.bumptech.glide.Glide;
 import com.videogo.openapi.bean.EZCameraInfo;
 import com.videogo.openapi.bean.EZDeviceInfo;
@@ -54,6 +53,7 @@ public class EZCameraListAdapter extends BaseAdapter {
     private OnClickListener mListener;
     private ExecutorService mExecutorService = null;// 线程池
     public Map<String, EZDeviceInfo> mExecuteItemMap = null;
+    public Map<String, String> mControlItemMap = null;
 
 
     public void clearAll(){
@@ -100,12 +100,15 @@ public class EZCameraListAdapter extends BaseAdapter {
         
         public View deviceDefenceRl;
         public ImageButton deviceDefenceBtn;
+
+        public TextView deviceIsControl;
     }
     
     public EZCameraListAdapter(Context context) {
         mContext = context;
         mCameraInfoList = new ArrayList<EZDeviceInfo>();
         mExecuteItemMap = new HashMap<String, EZDeviceInfo>();
+        mControlItemMap = new HashMap<String, String>();
     }
     
     public void setOnClickListener(OnClickListener l) {
@@ -186,6 +189,8 @@ public class EZCameraListAdapter extends BaseAdapter {
             viewHolder.deviceVideoBtn = (ImageButton) convertView.findViewById(R.id.tab_devicevideo_btn);
             viewHolder.deviceDefenceRl = convertView.findViewById(R.id.tab_devicedefence_rl);
             viewHolder.deviceDefenceBtn = (ImageButton) convertView.findViewById(R.id.tab_devicedefence_btn);
+
+            viewHolder.deviceIsControl = (TextView) convertView.findViewById(R.id.camera_iscontrol);
             
             // 设置点击图标的监听响应函数
             viewHolder.playBtn.setOnClickListener(mOnClickListener);
@@ -217,7 +222,17 @@ public class EZCameraListAdapter extends BaseAdapter {
 
         final EZDeviceInfo deviceInfo = getItem(position);
         final EZCameraInfo cameraInfo = EZUtils.getCameraInfoFromDevice(deviceInfo,0);
+
+        final String cameraserial = deviceInfo.getDeviceSerial();
+
         if (deviceInfo != null){
+            if(mControlItemMap.containsKey(deviceInfo.getDeviceSerial())) {
+                String isControl = mControlItemMap.get(deviceInfo.getDeviceSerial());
+                if(isControl.equals("1")){
+                    viewHolder.deviceIsControl.setText("控制中...");
+                }
+            }
+
             if (deviceInfo.getStatus() == 2) {
                 viewHolder.offlineBtn.setVisibility(View.VISIBLE);
                 viewHolder.offlineBgBtn.setVisibility(View.VISIBLE);

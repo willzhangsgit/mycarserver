@@ -27,6 +27,10 @@ public class UserEnrollment implements Serializable {
 	private String mailaddress;
 	private String receiver;
 	private String mobile;
+	private String usersource;
+	private String openid;
+	private String pfkey;
+	private WxUserInfo wxuser;
 
 	public int getUserid() {
 		return userid;
@@ -186,5 +190,37 @@ public class UserEnrollment implements Serializable {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public String getUsersource() {
+		return usersource;
+	}
+
+	public void setUsersource(String usersource) {
+		this.usersource = usersource;
+	}
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
+	public String getPfkey() {
+		return pfkey;
+	}
+
+	public void setPfkey(String pfkey) {
+		this.pfkey = pfkey;
+	}
+
+	public WxUserInfo getWxuser() {
+		return wxuser;
+	}
+
+	public void setWxuser(WxUserInfo wxuser) {
+		this.wxuser = wxuser;
 	}
 }

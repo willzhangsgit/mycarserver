@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -45,14 +46,15 @@ public class MachineController {
 	
 
 	@RequestMapping("/updateContorller")
-	public int updateUser(MachineInfo mac,HttpServletRequest request){
+	@ResponseBody
+	public int updateUser(HttpServletRequest request){
 		try {
 			InputStreamReader isr;
 			isr = new InputStreamReader(request.getInputStream(), "utf-8");
 			Gson gson = new Gson();
 			MachineInfo u = gson.fromJson(isr, MachineInfo.class);
 
-			int rtn = machineService.updateContorller(u.getUserid().toString(), u.getId().toString(), u.getIscontrol().toString());
+			int rtn = machineService.updateContorller(u.getUserid().toString(), u.getDeviceSerial(), u.getIscontrol().toString());
 			return rtn;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,11 +62,10 @@ public class MachineController {
 		return -1;
 	}
 
-	@RequestMapping("/getMac")
+	@RequestMapping("/getMac/{id}")
 	@ResponseBody
-	public WsOut getMac(String id,HttpServletRequest request){
+	public WsOut getMac(@PathVariable String id){
 		MachineInfo ecs = machineService.findById(String.valueOf(id));
-		request.setAttribute("mac", ecs);
 
 		WsOut wo = new WsOut();
 		wo.setResultCode(1);

@@ -174,7 +174,7 @@
                     android:hint="手机号"
                     android:textColorHint="#D8C5C5"
                     android:inputType="number"
-                    android:text="13166029815"
+                    android:text=""
                     android:lines="1"
                     android:textSize="18sp" />
 

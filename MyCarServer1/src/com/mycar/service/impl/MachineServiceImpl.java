@@ -31,9 +31,8 @@ public class MachineServiceImpl implements MachineService {
 		return user;
 	}
 
-	@Override
 	public int updateContorller(String userid, String id, String iscontrol) {
-		int rtn = mapper.updateContorller(userid, id, iscontrol);
+		int rtn = mapper.updateContorller(userid, iscontrol, id);
 		return rtn;
 	}
 }

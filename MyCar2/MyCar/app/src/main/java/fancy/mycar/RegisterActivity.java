@@ -43,7 +43,7 @@ public class RegisterActivity extends Activity {
 
 		initControl();
 
-		inittest();
+		//inittest();
 	}
 
 	private Runnable delayRun = new Runnable() {

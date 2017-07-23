@@ -12,7 +12,7 @@ public class MachineInfo {
 
     private Integer iscontrol;
 
-    private Integer userid;
+    private String userid;
 
     private String networkip;
 
@@ -80,11 +80,11 @@ public class MachineInfo {
 		this.iscontrol = iscontrol;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 
@@ -198,7 +198,7 @@ public class MachineInfo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MachineInfo(Integer id, String machinename, String deviceSerial, Integer userid,
+	public MachineInfo(Integer id, String machinename, String deviceSerial, String userid,
 			Integer enabled) {
 		super();
 		this.id = id;

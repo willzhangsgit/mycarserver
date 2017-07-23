@@ -147,5 +147,32 @@
 			android:layout_marginLeft="20dp"
 			 />
 
+		<Button
+			android:id="@+id/button_tb"
+			android:layout_width="100dip"
+			android:layout_height="40dip"
+			android:text="投 币"
+			android:background="@drawable/willyj_border"
+			android:layout_marginLeft="236dp"
+			android:layout_marginTop="30dp"
+			/>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="46dip"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="36dp"
+		android:gravity="right|center_vertical"
+		android:id="@+id/rDjsRL">
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/tvDjs"
+			android:layout_marginRight="50dp"
+			android:textColor="@color/orange_text"
+			android:textSize="20sp"
+			android:text=""
+			/>
 	</RelativeLayout>
 </RelativeLayout>

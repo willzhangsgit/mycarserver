@@ -90,11 +90,11 @@ public class UserController {
 		return null;
 	}
 
-	@RequestMapping("/getUser")
+	@RequestMapping("/getUser/{id}")
 	@ResponseBody
-	public String getUser(String id,HttpServletRequest request){
+	public String getUser(@PathVariable String id){
 		UserEnrollment ecs = userService.findById(String.valueOf(id));
-		request.setAttribute("user", ecs);
+
 		if(ecs == null)
 			return "查无此记录";
 		
@@ -119,7 +119,7 @@ public class UserController {
 		
 		
 		List<UserEnrollment> findPhone = userService.findUserByPhone(phoneno);
-		if(findAc.size() > 0){
+		if(findPhone.size() > 0){
 			rtnWo.setResultCode(-3);
 			rtnWo.setResultMessage("手机号已注册");
 		}

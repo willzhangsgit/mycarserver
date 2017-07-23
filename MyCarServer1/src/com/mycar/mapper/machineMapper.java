@@ -2,6 +2,7 @@ package com.mycar.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -17,6 +18,6 @@ public interface machineMapper {
 	public List<MachineInfo> findAll();
 	
 	@Update("update cardb.dbo.MachineInfo set userid= #{userid},iscontrol = #{iscontrol} where deviceSerial = #{id}")
-	public int updateContorller(String userid, String id, String iscontrol);
+	public int updateContorller(@Param("userid") String userid,@Param("iscontrol") String iscontrol,@Param("id") String id);
 
 }

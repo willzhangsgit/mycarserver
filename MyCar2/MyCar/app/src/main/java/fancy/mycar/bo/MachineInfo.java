@@ -17,7 +17,7 @@ public class MachineInfo implements Serializable {
 
 	private Integer iscontrol;
 
-	private Integer userid;
+	private String userid;
 
 	private String networkip;
 
@@ -189,11 +189,11 @@ public class MachineInfo implements Serializable {
 		this.prizname = prizname;
 	}
 
-	public Integer getUserid() {
+	public String getUserid() {
 		return userid;
 	}
 
-	public void setUserid(Integer userid) {
+	public void setUserid(String userid) {
 		this.userid = userid;
 	}
 }

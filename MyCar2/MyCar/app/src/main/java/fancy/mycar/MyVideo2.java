@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -101,7 +103,7 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	private Button mAddBtn;
 	private Button mUserBtn;
 	private TextView mMyDevice;
-	private TextView mShareDevice;
+	private TextView mShareDevice,tvUserWelcome;
 	private Button mPushCheckBtn;
 
 	private boolean bIsFromSetting = false;
@@ -243,6 +245,7 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 				popLogoutDialog();
 			}
 		});
+		tvUserWelcome = (TextView) findViewById(R.id.text_user);
 
 //        mAddBtn.setOnClickListener(new OnClickListener() {
 //            @Override
@@ -262,6 +265,11 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 //                getCameraInfoList(true);
 //            }
 //        });
+
+		if(EzvizApplication.loggedUser!=null && EzvizApplication.loggedUser.getAccounts() != ""){
+			String strwelcome = "欢迎您，" + EzvizApplication.loggedUser.getAccounts();
+			tvUserWelcome.setText(strwelcome);
+		}
 
 		mMyDevice.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -580,6 +588,11 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 		if (mReceiver != null) {
 			unregisterReceiver(mReceiver);
 		}
+
+		if(EzvizApplication.mTencent != null){
+			EzvizApplication.mTencent.logout(this.getApplicationContext());
+			EzvizApplication.mTencent = null;
+		}
 	}
 
 	@Override
@@ -690,6 +703,41 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 			mWaitDialog.dismiss();
 			ActivityUtils.goToLoginAgain(MyVideo2.this);
 			finish();
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			//exit();
+			//return false;
+
+			return super.onKeyDown(keyCode, event);
+		} else {
+			return super.onKeyDown(keyCode, event);
+
+		}
+	}
+
+	boolean isExit;
+	Handler exitHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			isExit = false;
+		}
+	};
+
+	private void exit(){
+		if (!isExit) {
+			isExit = true;
+			Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+			exitHandler.sendEmptyMessageDelayed(0, 2000);
+		} else {
+			Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.addCategory(Intent.CATEGORY_HOME);
+			startActivity(intent);
+			System.exit(0);
 		}
 	}
 

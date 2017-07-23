@@ -23,7 +23,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.connect.UserInfo;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,6 +44,9 @@ import fancy.mycar.ui.util.ActivityUtils;
 
 public class MyLogin_FRM extends Activity {
 	protected static final String TAG = "MyLogin_FRM";
+	public static String mQQScope;
+	public static Tencent mTencent;
+	public static UserInfo mQQUserInfo = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,12 @@ public class MyLogin_FRM extends Activity {
 		initControl();
 
 		initConfig();
+
+		initQQApi();
+	}
+
+	private void initQQApi() {
+		mQQScope = "all";
 	}
 
 	private void initConfig() {
@@ -143,14 +156,22 @@ public class MyLogin_FRM extends Activity {
 	}
 
 	private void QQLogin() {
-		if (!EzvizApplication.mTencent.isSessionValid()) {
-			EzvizApplication.mTencent.login(MyLogin_FRM.this, EzvizApplication.scope, EzvizApplication.loginListener);
+		if(mTencent == null){
+			mTencent = Tencent.createInstance(Constant.QQ_APPID, EzvizApplication.getCtx());
+		}
+		if (!mTencent.isSessionValid()) {
+			mTencent.login(MyLogin_FRM.this, mQQScope, loginListener);
+			EzvizApplication.mTencent = mTencent;
 		}
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data_intent) {
 		super.onActivityResult(requestCode, resultCode, data_intent);
+
+		if(requestCode == 11101) {
+			mTencent.onActivityResultData(requestCode,resultCode,data_intent, loginListener);
+		}
 
 		if(1 == resultCode){
 			UserEnrollment regUser = (UserEnrollment) data_intent.getSerializableExtra("dataList");
@@ -183,8 +204,9 @@ public class MyLogin_FRM extends Activity {
 						if (result.equals("1")) {
 							//登录成功
 							JSONObject realData = jsonObject.getJSONObject("data").getJSONObject("loginUser");
-							UserEnrollment lUser = new Gson().fromJson(realData.toString(), UserEnrollment.class);
-							EzvizApplication.loggedUser = lUser;
+							UserEnrollment rUser = new Gson().fromJson(realData.toString(), UserEnrollment.class);
+							rUser.setUsersource("");
+							EzvizApplication.loggedUser = rUser;
 							Intent intent = new Intent();
 							intent.setClass(getApplicationContext(), MyVideo2.class);
 							startActivity(intent);
@@ -215,5 +237,82 @@ public class MyLogin_FRM extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+	}
+
+	IUiListener loginListener = new BaseUiListener("login");
+
+	private class BaseUiListener implements IUiListener {
+		private String scope;
+
+		public BaseUiListener(String scope) {
+			this.scope = scope;
+		}
+
+		@Override
+		public void onComplete(Object response) {
+			if (null == response) {
+				return;
+			}
+			JSONObject jsonResponse = (JSONObject) response;
+			if (null != jsonResponse && jsonResponse.length() == 0) {
+				return;
+			}
+			//Util.showResultDialog(MyLogin_FRM.this, response.toString(), "登录成功");
+			if(this.scope.equals("login")) {
+				doComplete((JSONObject) response);
+			}else{
+				doGetUserInfo((JSONObject) response);
+			}
+		}
+
+		private void doGetUserInfo(JSONObject jo) {
+			try {
+				//Toast.makeText(MyLogin_FRM.this, "获取信息成功", Toast.LENGTH_LONG).show();
+				String nickname = jo.getString("nickname");
+
+				EzvizApplication.loggedUser.setAccounts(nickname);
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), MyVideo2.class);
+				startActivity(intent);
+			}catch (Exception ex){
+
+			}
+		}
+
+		protected void doComplete(JSONObject jo) {
+			try {
+				//Toast.makeText(MyLogin_FRM.this, "登录成功", Toast.LENGTH_LONG).show();
+				String msg = jo.getString("msg");
+				String openID = jo.getString("openid");
+				String accessToken = jo.getString("access_token");
+				String expires = jo.getString("expires_in");
+				String pfkey = jo.getString("pfkey");
+
+				mTencent.setOpenId(openID);
+				mTencent.setAccessToken(accessToken, expires);
+
+				UserEnrollment lUser = new UserEnrollment();
+				lUser.setPhone("-1");
+				lUser.setUsersource("QQ");
+				lUser.setOpenid(openID);
+				lUser.setPfkey(pfkey);
+				EzvizApplication.loggedUser = lUser;
+
+				mQQUserInfo = new UserInfo(MyLogin_FRM.this, mTencent.getQQToken());
+				mQQUserInfo.getUserInfo(new BaseUiListener("get_user_simple_info"));
+			}catch (Exception ex){
+				Log.d("QQLoginException", ex.getMessage());
+			}
+		}
+
+		@Override
+		public void onError(UiError e) {
+
+		}
+
+		@Override
+		public void onCancel() {
+
+		}
 	}
 }

@@ -28,6 +28,6 @@ public interface userMapper {
 	@Options(useGeneratedKeys = true, keyProperty = "cardb.dbo.UserEnrollment.userid")
 	public int reg(UserEnrollment user);
 	
-	@Update("update cardb.dbo.UserEnrollment set alllogintimes = isnull(alllogintimes,0) + 1,lastlogindate = getdate(),lastloginip = #{lastloginip} where phone = #{phone} and password = #{password}")
+	@Update("update cardb.dbo.UserEnrollment set alllogintimes = isnull(alllogintimes,0) + 1,lastlogindate = getdate(),lastloginip = #{lastloginip} where (phone = #{phone} or accounts = #{accounts}) and password = #{password}")
 	public int login(UserEnrollment user);
 }

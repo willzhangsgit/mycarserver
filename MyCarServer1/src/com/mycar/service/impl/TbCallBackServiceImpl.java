@@ -21,15 +21,15 @@ public class TbCallBackServiceImpl implements TbCallBackService {
 	private tbcallbackMapper mapper;
 
 	@Override
-	public List<CallbackRecord> findByC(String action, String code, int falg) {
+	public List<CallbackRecord> findByC(String action, String code, int flag) {
 		// TODO Auto-generated method stub
-		return null;
+		return mapper.findByC(action, code, flag);
 	}
 
 	@Override
 	public int saveCallBackRecord(CallbackRecord cbr) {
 		// TODO Auto-generated method stub
-		return 0;
+		return mapper.saveCallBackRecord(cbr);
 	}
 
 }

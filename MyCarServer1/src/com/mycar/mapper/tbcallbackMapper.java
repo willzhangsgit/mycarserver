@@ -5,15 +5,16 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 
 import com.mycar.bo.*;
-
+import com.mycar.sqlprovider.TbCallbackSqlProvider;
 
 public interface tbcallbackMapper {
 	
-	@Select("select * from cardb.dbo.ptd_callback_record where action = #{action}")
-	public List<CallbackRecord> findByC(String action, String code, int flag);
+	@SelectProvider(type = TbCallbackSqlProvider.class, method = "findByCSql")
+	public List<CallbackRecord> findByC(@Param("action") String action,@Param("code") String code,@Param("flag") int flag);
 	
 
     @Insert({

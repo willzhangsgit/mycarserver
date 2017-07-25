@@ -7,23 +7,23 @@ public class CallbackRecord {
 
     private String action;
 
-    private String deviceCode;
+    private String device_code;
 
-    private String deviceStatus;
+    private String device_status;
 
     private String sign;
 
-    private String orderCode;
+    private String order_code;
 
-    private Integer coinCount;
+    private Integer coin_count;
 
-    private String timeCreate;
+    private String time_create;
 
     private String status;
 
     private Integer result;
 
-    private String errMsg;
+    private String err_msg;
 
     private Date callbacktime;
 
@@ -43,20 +43,20 @@ public class CallbackRecord {
 		this.action = action;
 	}
 
-	public String getDeviceCode() {
-		return deviceCode;
+	public String getDevice_code() {
+		return device_code;
 	}
 
-	public void setDeviceCode(String deviceCode) {
-		this.deviceCode = deviceCode;
+	public void setDevice_code(String device_code) {
+		this.device_code = device_code;
 	}
 
-	public String getDeviceStatus() {
-		return deviceStatus;
+	public String getDevice_status() {
+		return device_status;
 	}
 
-	public void setDeviceStatus(String deviceStatus) {
-		this.deviceStatus = deviceStatus;
+	public void setDevice_status(String device_status) {
+		this.device_status = device_status;
 	}
 
 	public String getSign() {
@@ -67,28 +67,28 @@ public class CallbackRecord {
 		this.sign = sign;
 	}
 
-	public String getOrderCode() {
-		return orderCode;
+	public String getOrder_code() {
+		return order_code;
 	}
 
-	public void setOrderCode(String orderCode) {
-		this.orderCode = orderCode;
+	public void setOrder_code(String order_code) {
+		this.order_code = order_code;
 	}
 
-	public Integer getCoinCount() {
-		return coinCount;
+	public Integer getCoin_count() {
+		return coin_count;
 	}
 
-	public void setCoinCount(Integer coinCount) {
-		this.coinCount = coinCount;
+	public void setCoin_count(Integer coin_count) {
+		this.coin_count = coin_count;
 	}
 
-	public String getTimeCreate() {
-		return timeCreate;
+	public String getTime_create() {
+		return time_create;
 	}
 
-	public void setTimeCreate(String timeCreate) {
-		this.timeCreate = timeCreate;
+	public void setTime_create(String time_create) {
+		this.time_create = time_create;
 	}
 
 	public String getStatus() {
@@ -107,12 +107,12 @@ public class CallbackRecord {
 		this.result = result;
 	}
 
-	public String getErrMsg() {
-		return errMsg;
+	public String getErr_msg() {
+		return err_msg;
 	}
 
-	public void setErrMsg(String errMsg) {
-		this.errMsg = errMsg;
+	public void setErr_msg(String err_msg) {
+		this.err_msg = err_msg;
 	}
 
 	public Date getCallbacktime() {
@@ -122,35 +122,20 @@ public class CallbackRecord {
 	public void setCallbacktime(Date callbacktime) {
 		this.callbacktime = callbacktime;
 	}
-	
-	
 
 	public CallbackRecord() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CallbackRecord(Long id, String action, String deviceCode,
-			String deviceStatus, String sign, String orderCode,
-			Integer coinCount, String timeCreate) {
-		super();
-		this.id = id;
-		this.action = action;
-		this.deviceCode = deviceCode;
-		this.deviceStatus = deviceStatus;
-		this.sign = sign;
-		this.orderCode = orderCode;
-		this.coinCount = coinCount;
-		this.timeCreate = timeCreate;
-	}
-
 	@Override
 	public String toString() {
 		return "CallbackRecord [id=" + id + ", action=" + action
-				+ ", deviceCode=" + deviceCode + ", deviceStatus="
-				+ deviceStatus + ", sign=" + sign + ", orderCode=" + orderCode
-				+ ", coinCount=" + coinCount + ", timeCreate=" + timeCreate
-				+ ", status=" + status + ", result=" + result + ", errMsg="
-				+ errMsg + ", callbacktime=" + callbacktime + "]";
+				+ ", device_code=" + device_code + ", device_status="
+				+ device_status + ", sign=" + sign + ", order_code="
+				+ order_code + ", coin_count=" + coin_count + ", time_create="
+				+ time_create + ", status=" + status + ", result=" + result
+				+ ", err_msg=" + err_msg + ", callbacktime=" + callbacktime
+				+ "]";
 	}
 }

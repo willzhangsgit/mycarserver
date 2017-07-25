@@ -176,22 +176,8 @@ public class UserController {
 			Gson gson = new Gson();
 			UserEnrollment u = gson.fromJson(isr, UserEnrollment.class);
 
-			if(u.getAccounts()!=null && !u.getAccounts().equals("")){
-				WsOut sysuser = searchUser(u.getAccounts(), u.getPhone());
-				if(sysuser.getResultCode() != 1){
-					return sysuser;
-				}
-			
-				WsOut regrtn = userService.login(u);
-				return regrtn;
-			}else{
-				if(u.getPhone()!=null && !u.getPhone().equals("")){
-					WsOut regrtn = userService.login(u);
-					return regrtn;
-				}else{
-					return null;
-				}
-			}
+			WsOut regrtn = userService.login(u);
+			return regrtn;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

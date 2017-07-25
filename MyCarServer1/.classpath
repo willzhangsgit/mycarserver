@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="lib/spring-jdbc-4.0.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/spring-test-4.0.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/spring-tx-4.0.0.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-web-4.0.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-web-4.0.0.RELEASE.jar" sourcepath="D:/tmpwork/apache-maven-3.2.5/repo/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE-sources.jar"/>
 	<classpathentry kind="lib" path="lib/spring-webmvc-4.0.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/standard-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/xerces-2.6.2.jar"/>

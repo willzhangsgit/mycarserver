@@ -37,11 +37,37 @@ public class TbCallBackController {
 		String device_status = request.getParameter("device_status");
 		String sign = request.getParameter("sign");
 		
-		CallBackResult cbr = new CallBackResult();
-		cbr.setResult(1);
-		cbr.setErr_msg("");
+		CallbackRecord cbr = new CallbackRecord();
+		cbr.setAction(action);
+		cbr.setDevice_code(device_code);
+		cbr.setDevice_status(device_status);
+		cbr.setSign(sign);
 		
-		return cbr;
+		tbcallbackService.saveCallBackRecord(cbr);
+		
+		CallBackResult cbrtn = new CallBackResult();
+		cbrtn.setResult(1);
+		cbrtn.setErr_msg("");
+		
+		return cbrtn;
 	}
 
+	@RequestMapping(value = "/devicestatus_get", method = RequestMethod.GET)
+	@ResponseBody
+	public WsOut devicestatus_get(HttpServletRequest request){
+		String action = request.getParameter("action");
+		String device_code = request.getParameter("device_code");
+		int flag = 2;
+		if(action != null && !action.equals("")){
+			flag = 1;
+		}
+		
+		List<CallbackRecord> lcr = tbcallbackService.findByC(action, device_code, flag);
+		
+		WsOut wo = new WsOut();
+		wo.setResultCode(1);
+		wo.addData("callbackList", lcr);
+		
+		return wo;
+	}
 }

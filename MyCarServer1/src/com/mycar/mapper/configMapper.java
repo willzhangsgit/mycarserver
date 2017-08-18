@@ -9,10 +9,10 @@ import com.mycar.bo.*;
 
 public interface configMapper {
 	
-	@Select("select * from cardb.dbo.ets_cis_config where cfg_id = #{id}")
+	@Select("select * from cardb.dbo.ets_cis_config where cfg_name = #{id} and enabled=1 ")
 	public ets_cis_config findById(String id);
 	
-	@Select("select * from cardb.dbo.ets_cis_config")
+	@Select("select * from cardb.dbo.ets_cis_config where enabled=1 ")
 	public List<ets_cis_config> findAll();
 
 }

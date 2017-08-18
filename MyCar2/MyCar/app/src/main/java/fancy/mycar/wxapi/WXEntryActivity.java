@@ -65,7 +65,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                     case 1:
                         //拿到了微信返回的code,立马再去请求access_token
                         String code = ((SendAuth.Resp) resp).code;
-                        String wxappsecret = Util.getconfig("wx_appsecret");
+                        String wxappsecret = Util.getconfig("wx_appsecret","");
                         if(wxappsecret == null){
                             Toast.makeText(this,"服务器连接失败", Toast.LENGTH_LONG).show();
                             Intent intent = new Intent();

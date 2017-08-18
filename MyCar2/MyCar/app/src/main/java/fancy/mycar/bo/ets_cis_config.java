@@ -12,6 +12,7 @@ public class ets_cis_config implements Serializable {
 	public String cfg_desc;
 	public String cfg_value;
 	public String enabled;
+	public String cfg_ext1;
 
 	public String getCfg_desc() {
 		return cfg_desc;
@@ -51,5 +52,13 @@ public class ets_cis_config implements Serializable {
 
 	public void setEnabled(String enabled) {
 		this.enabled = enabled;
+	}
+
+	public String getCfg_ext1() {
+		return cfg_ext1;
+	}
+
+	public void setCfg_ext1(String cfg_ext1) {
+		this.cfg_ext1 = cfg_ext1;
 	}
 }

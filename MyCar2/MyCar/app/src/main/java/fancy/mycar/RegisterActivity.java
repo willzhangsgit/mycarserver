@@ -143,7 +143,7 @@ public class RegisterActivity extends Activity {
 		EzvizApplication.getReqQueue().add(request);
 	}
 
-	int counter = 60;
+	int counter = 180;
 	private final Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -195,7 +195,8 @@ public class RegisterActivity extends Activity {
 			String receiver = etReceiver.getText().toString();
 			String localip = ActivityUtils.getlocalip(RegisterActivity.this);
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("accounts", nickname);
+			//jsonObject.put("accounts", nickname);
+			jsonObject.put("accounts", phoneno);
 			jsonObject.put("phone", phoneno);
 			//jsonObject.put("verifyCode", verifycode);
 			jsonObject.put("password", password);
@@ -225,7 +226,11 @@ public class RegisterActivity extends Activity {
 							setResult(1, intent);
 							finish();
 						} else {
-							Toast.makeText(RegisterActivity.this, "Error:" + jsonObject.getString("resultMessage"), Toast.LENGTH_SHORT).show();
+							if(result.equals("-2") || result.equals("-3")) {
+								Toast.makeText(RegisterActivity.this, "提示:" + jsonObject.getString("resultMessage"), Toast.LENGTH_SHORT).show();
+							}else{
+								Toast.makeText(RegisterActivity.this, "Error:" + jsonObject.getString("resultMessage"), Toast.LENGTH_SHORT).show();
+							}
 							btnRegister.setEnabled(true);
 							return;
 						}

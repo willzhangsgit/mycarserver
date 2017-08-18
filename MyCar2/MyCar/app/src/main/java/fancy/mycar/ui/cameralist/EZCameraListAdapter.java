@@ -35,7 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import fancy.mycar.Constant;
 import fancy.mycar.R;
+import fancy.mycar.bo.MachineInfo;
 import fancy.mycar.ui.util.EZUtils;
 
 
@@ -53,7 +55,7 @@ public class EZCameraListAdapter extends BaseAdapter {
     private OnClickListener mListener;
     private ExecutorService mExecutorService = null;// 线程池
     public Map<String, EZDeviceInfo> mExecuteItemMap = null;
-    public Map<String, String> mControlItemMap = null;
+    public Map<String, MachineInfo> mControlItemMap = null;
 
 
     public void clearAll(){
@@ -108,7 +110,7 @@ public class EZCameraListAdapter extends BaseAdapter {
         mContext = context;
         mCameraInfoList = new ArrayList<EZDeviceInfo>();
         mExecuteItemMap = new HashMap<String, EZDeviceInfo>();
-        mControlItemMap = new HashMap<String, String>();
+        mControlItemMap = new HashMap<String, MachineInfo>();
     }
     
     public void setOnClickListener(OnClickListener l) {
@@ -225,12 +227,15 @@ public class EZCameraListAdapter extends BaseAdapter {
 
         final String cameraserial = deviceInfo.getDeviceSerial();
 
+        MachineInfo mLocMac = new MachineInfo();
+
         if (deviceInfo != null){
             if(mControlItemMap.containsKey(deviceInfo.getDeviceSerial())) {
-                String isControl = mControlItemMap.get(deviceInfo.getDeviceSerial());
+                String isControl = mControlItemMap.get(deviceInfo.getDeviceSerial()).getIscontrol().toString();
                 if(isControl.equals("1")){
                     viewHolder.deviceIsControl.setText("控制中...");
                 }
+                mLocMac = mControlItemMap.get(deviceInfo.getDeviceSerial());
             }
 
             if (deviceInfo.getStatus() == 2) {
@@ -246,7 +251,8 @@ public class EZCameraListAdapter extends BaseAdapter {
             }
             viewHolder.cameraNameTv.setText(deviceInfo.getDeviceName());
             viewHolder.iconIv.setVisibility(View.VISIBLE);
-            String imageUrl = deviceInfo.getDeviceCover();
+            //String imageUrl = deviceInfo.getDeviceCover();
+            String imageUrl = Constant.ServerResUrl + mLocMac.getDeviceIcon();
             if(!TextUtils.isEmpty(imageUrl)) {
                 Glide.with(mContext).load(imageUrl).placeholder(R.drawable.device_other).into(viewHolder.iconIv);
             }

@@ -68,7 +68,11 @@ public class HttpUtil {
 		URL url = null;
 		HttpURLConnection httpURLConnection = null;
 		try {
-			url = new URL(strUrl + "?" + param);
+			if(param!=null && !param.equals(""))
+				url = new URL(strUrl + "?" + param);
+			else
+				url = new URL(strUrl);
+			
 			httpURLConnection = (HttpURLConnection) url.openConnection();			
 			httpURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

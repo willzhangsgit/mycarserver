@@ -62,10 +62,28 @@ public class UserServiceImpl implements UserService {
 			lUser.setUserid(rtnReg);
 			wrtn.addData("loginUser", lUser);
 		}else{
-			wrtn.setResultCode(1);
-			wrtn.setResultMessage("登录成功");
-			UserEnrollment lUser = mapper.findById(String.valueOf(rtnReg));
-			wrtn.addData("loginUser", lUser);
+			//UserEnrollment lUser = mapper.findById(String.valueOf(rtnReg));
+			List<UserEnrollment> lUser = mapper.findByAccount(user.getAccounts());
+			if(lUser.size() > 0){
+				//账号登陆
+				UserEnrollment rUser = lUser.get(0);
+				wrtn.addData("loginUser", rUser);
+				wrtn.setResultCode(1);
+				wrtn.setResultMessage("登录成功");
+			}else{
+				lUser = mapper.findByPhone(user.getPhone());
+				if(lUser.size() > 0){
+					//手机号登陆
+					UserEnrollment rUser = lUser.get(0);
+					wrtn.addData("loginUser", rUser);
+					wrtn.setResultCode(1);
+					wrtn.setResultMessage("登录成功");
+				}else{
+					wrtn.addData("loginUser", null);
+					wrtn.setResultCode(-1);
+					wrtn.setResultMessage("登录失败,找不到对应的用户信息");
+				}
+			}
 		}
 
 		return wrtn;

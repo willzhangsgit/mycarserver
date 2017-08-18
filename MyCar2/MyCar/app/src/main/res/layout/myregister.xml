@@ -227,6 +227,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_margin="5dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <EditText
@@ -247,6 +248,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
+                android:visibility="gone"
                 android:background="#D4D4D4"></View>
 
             <LinearLayout
@@ -279,6 +281,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_margin="5dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <EditText
@@ -299,12 +302,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
+                android:visibility="gone"
                 android:background="#D4D4D4"></View>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_margin="5dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <EditText
@@ -325,12 +330,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
+                android:visibility="gone"
                 android:background="#D4D4D4"></View>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_margin="5dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <EditText
@@ -351,12 +358,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
+                android:visibility="gone"
                 android:background="#D4D4D4"></View>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_margin="5dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <EditText
@@ -377,6 +386,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
+                android:visibility="gone"
                 android:background="#D4D4D4"></View>
         </LinearLayout>
 

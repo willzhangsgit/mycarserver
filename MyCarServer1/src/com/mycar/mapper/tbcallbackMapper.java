@@ -22,9 +22,9 @@ public interface tbcallbackMapper {
         "device_code, device_status, sign, order_code, ",
         "coin_count, time_create, status, result, ",
         "err_msg, callbacktime)",
-        " values (#{action}, #{deviceCode}, #{deviceStatus}, ",
-        "#{sign}, #{orderCode}, #{coinCount}, #{timeCreate}, ",
-        "#{status}, #{result}, #{errMsg}, #{callbacktime})"
+        " values (#{action}, #{device_code}, #{device_status}, ",
+        "#{sign}, #{order_code}, #{coin_count}, #{time_create}, ",
+        "#{status}, #{result}, #{err_msg}, getdate())"
     })
 	public int saveCallBackRecord(CallbackRecord record);
 

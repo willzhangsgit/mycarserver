@@ -45,6 +45,12 @@ public class MachineInfo implements Serializable {
 
 	private Integer enabled;
 
+	private  String deviceKey;
+
+	private String controlDomain;
+
+	private String deviceIcon;
+
 	public Integer getCameraid() {
 		return cameraid;
 	}
@@ -195,5 +201,29 @@ public class MachineInfo implements Serializable {
 
 	public void setUserid(String userid) {
 		this.userid = userid;
+	}
+
+	public String getDeviceKey() {
+		return deviceKey;
+	}
+
+	public void setDeviceKey(String deviceKey) {
+		this.deviceKey = deviceKey;
+	}
+
+	public String getControlDomain() {
+		return controlDomain;
+	}
+
+	public void setControlDomain(String controlDomain) {
+		this.controlDomain = controlDomain;
+	}
+
+	public String getDeviceIcon() {
+		return deviceIcon;
+	}
+
+	public void setDeviceIcon(String deviceIcon) {
+		this.deviceIcon = deviceIcon;
 	}
 }

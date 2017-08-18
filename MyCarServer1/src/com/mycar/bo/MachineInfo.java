@@ -39,6 +39,12 @@ public class MachineInfo {
     private String prizname;
 
     private Integer enabled;
+    
+    private String deviceKey;
+    
+    private String controlDomain;
+    
+    private String deviceIcon;
 
 	public Integer getId() {
 		return id;
@@ -191,7 +197,30 @@ public class MachineInfo {
 	public void setEnabled(Integer enabled) {
 		this.enabled = enabled;
 	}
-	
+
+	public String getDeviceKey() {
+		return deviceKey;
+	}
+
+	public void setDeviceKey(String deviceKey) {
+		this.deviceKey = deviceKey;
+	}
+
+	public String getControlDomain() {
+		return controlDomain;
+	}
+
+	public void setControlDomain(String controlDomain) {
+		this.controlDomain = controlDomain;
+	}
+
+	public String getDeviceIcon() {
+		return deviceIcon;
+	}
+
+	public void setDeviceIcon(String deviceIcon) {
+		this.deviceIcon = deviceIcon;
+	}
 
 	public MachineInfo() {
 		super();
@@ -199,13 +228,14 @@ public class MachineInfo {
 	}
 
 	public MachineInfo(Integer id, String machinename, String deviceSerial, String userid,
-			Integer enabled) {
+			Integer enabled, String deviceKey) {
 		super();
 		this.id = id;
 		this.machinename = machinename;
 		this.deviceSerial = deviceSerial;
 		this.userid = userid;
 		this.enabled = enabled;
+		this.deviceKey = deviceKey;
 	}
 
 	@Override
@@ -220,7 +250,8 @@ public class MachineInfo {
 				+ ", coinquantity=" + coinquantity + ", cameraid=" + cameraid
 				+ ", cameraname=" + cameraname + ", camerastatus="
 				+ camerastatus + ", prizid=" + prizid + ", prizname="
-				+ prizname + ", enabled=" + enabled + "]";
+				+ prizname + ", enabled=" + enabled + ", deviceKey="
+				+ deviceKey + ", controlDomain=" + controlDomain
+				+ ", deviceIcon=" + deviceIcon + "]";
 	}
-    
 }

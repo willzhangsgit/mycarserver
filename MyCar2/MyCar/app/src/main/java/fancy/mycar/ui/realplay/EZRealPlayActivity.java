@@ -191,6 +191,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
      * 屏幕当前方向
      */
     private int mOrientation = Configuration.ORIENTATION_PORTRAIT;
+    //private int mOrientation = Configuration.ORIENTATION_LANDSCAPE;
     private int mForceOrientation = 0;
     private Rect mRealPlayRect = null;
 
@@ -363,7 +364,8 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 
     private String mDeviceSerial = null;
     public static MachineInfo mLocMac = null;
-    public int djstime = 20;
+    public int djstime = 30;
+    public int overtime = 28;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -389,35 +391,33 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         TakePhotos = (Button) findViewById(R.id.TakePhoto);
         ViewPhotos = (Button) findViewById(R.id.ViewPhoto);
 
-        TakePhotos.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                if (null != fancy.mycar.Constant.handler) {
-                    Message message = new Message();
-                    message.what = 1;
-                    fancy.mycar.Constant.handler.sendMessage(message);
-                }
-            }
-
-        });
-
 //        r.GetCameraIP(CameraIp);
-        InitSocket();
 
         if (mDeviceInfo != null) {
             //获取设备最新状态
             mDeviceSerial = mDeviceInfo.getDeviceSerial();
-            getDeviceStatus(mDeviceSerial);
+            getDeviceStatus(mDeviceSerial, 1);
         }
+    }
+
+    private void initControl() {
+        if(mLocMac != null){
+            CtrlIp = mLocMac.getControlDomain();
+            CtrlPort = mLocMac.getControlport1();
+
+            InitSocket();
+        }
+
+        Log.d("wifirobot", "control is :++++" + CtrlIp);
+        Log.d("wifirobot", "CtrlPort is :++++" + CtrlPort);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            return;
-        }
+//        if (mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            return;
+//        }
         new Handler().postDelayed(new Runnable() {
 
             @Override
@@ -558,9 +558,13 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 
     @Override
     public void onBackPressed() {
-        if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
-            mScreenOrientationHelper.portrait();
-            return;
+//        if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
+//            mScreenOrientationHelper.portrait();
+//            return;
+//        }
+        if (mEZPlayer != null) {
+            mEZPlayer.release();
+
         }
         exit();
     }
@@ -609,11 +613,8 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         //CtrlIp = "lelelife.vicp.cc";
         //CtrlPort = "19211";
         //CtrlPort = "11305";
-        CtrlIp = Util.getconfig("control_domain");
-        CtrlPort = Util.getconfig("control_port");
-
-        Log.d("wifirobot", "control is :++++" + CtrlIp);
-        Log.d("wifirobot", "CtrlPort is :++++" + CtrlPort);
+        //CtrlIp = Util.getconfig("control_domain", mCameraInfo.getDeviceSerial());
+        //CtrlPort = Util.getconfig("control_port", mCameraInfo.getDeviceSerial());
     }
 
     private void getRealPlaySquareInfo() {
@@ -728,11 +729,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 
             @Override
             public boolean canZoom(float scale) {
-                if (mStatus == RealPlayStatus.STATUS_PLAY) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return false;
             }
 
             @Override
@@ -770,7 +767,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
             public void onZoom(float scale) {
                 LogUtil.debugLog(TAG, "onZoom:" + scale);
                 if (mEZPlayer != null && mDeviceInfo != null && mDeviceInfo.isSupportZoom()) {
-                    startZoom(scale);
+                    //startZoom(scale);
                 }
             }
 
@@ -797,16 +794,6 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
             @Override
             public void onZoomChange(float scale, CustomRect oRect, CustomRect curRect) {
                 LogUtil.debugLog(TAG, "onZoomChange:" + scale);
-                if (mEZPlayer != null && mDeviceInfo != null && mDeviceInfo.isSupportZoom()) {
-                    //采用云台调焦
-                    return;
-                }
-                if (mStatus == RealPlayStatus.STATUS_PLAY) {
-                    if (scale > 1.0f && scale < 1.1f) {
-                        scale = 1.1f;
-                    }
-                    setPlayScaleUI(scale, oRect, curRect);
-                }
             }
         };
         mRealPlaySv.setOnTouchListener(mRealPlayTouchListener);
@@ -845,16 +832,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
             initOperateBarUI(false);
 
             initFullOperateBarUI();
-            //willtest end
 
-            // mj           LinearLayout.LayoutParams realPlayPlayRlLp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-            //                    LayoutParams.WRAP_CONTENT);
-            //            realPlayPlayRlLp.gravity = Gravity.CENTER;
-            //            mRealPlayPlayRl.setLayoutParams(realPlayPlayRlLp);
-
-            //willtest begin
-            //mRealPlayOperateBar.setVisibility(View.VISIBLE);
-            //willtest end
         } else {
             //mRealPlayPageLy.setBackgroundColor(getResources().getColor(R.color.black_bg));
             LinearLayout.LayoutParams realPlayPlayRlLp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
@@ -903,7 +881,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     stopMove();
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    lefeMove();
+                    leftMove();
                 }
                 return false;
             }
@@ -948,6 +926,12 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     confrimStop();
+
+                    SetControl(0);
+                    //抢控模式
+                    HideOperBtn(2);
+
+                    stopDjsHandler(2);
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 //                    forwardMove();
                     confrim();
@@ -973,7 +957,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         tvDjs.setVisibility(View.INVISIBLE);
     }
 
-    private void getDeviceStatus(String mDeviceSerial) {
+    private void getDeviceStatus(String mDeviceSerial, final int isOnLoad) {
         String servname = "http://" + fancy.mycar.Constant.GwServer + "/MyCarServer1/machine/getMac/" + mDeviceSerial;
         JsonRequest request = new JsonObjectRequest(servname, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
@@ -991,21 +975,25 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
                                 localuid = String.valueOf(EzvizApplication.loggedUser.getUserid());
                             }
 
-                            if(!mLocMac.getUserid().equals(localuid)) {
-                                //旁观模式
-                                HideOperBtn(1);
-                            }else{
-                                //操作模式
-                                HideOperBtn(3);
+                            if(isOnLoad == 1) {
+                                if (!mLocMac.getUserid().equals(localuid)) {
+                                    //旁观模式
+                                    HideOperBtn(1);
+                                } else {
+                                    //操作模式
+                                    HideOperBtn(3);
 
-                                //倒计时
-                                tvDjs.setVisibility(View.VISIBLE);
-                                new Thread(new gwDjsThread()).start();
+                                    //倒计时
+                                    tvDjs.setVisibility(View.VISIBLE);
+                                    new Thread(new gwDjsThread()).start();
+                                }
                             }
                         }else{
                             //抢控模式
                             HideOperBtn(2);
                         }
+
+                        initControl();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1323,8 +1311,9 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
     public void onConfigurationChanged(Configuration newConfig) {
         mOrientation = newConfig.orientation;
 
-        onOrientationChanged();
+        //onOrientationChanged();
         super.onConfigurationChanged(newConfig);
+
     }
 
     private void updateOrientation() {
@@ -2619,9 +2608,9 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
             return;
         }
 
-        if (sensor == ActivityInfo.SCREEN_ORIENTATION_SENSOR)
-            mScreenOrientationHelper.enableSensorOrientation();
-        else
+        //if (sensor == ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+            //mScreenOrientationHelper.enableSensorOrientation();
+        //else
             mScreenOrientationHelper.disableSensorOrientation();
     }
 
@@ -2840,7 +2829,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         setRealPlayTalkUI();
 
         setVideoLevel();
-        
+
 /*
         if (mRealPlayMgr != null && mRealPlayMgr.getSupportPtzPrivacy() == 1) {
             mRealPlayPrivacyBtnLy.setVisibility(View.VISIBLE);
@@ -3188,7 +3177,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         setRealPlaySound();
 
         // temp solution for OPENSDK-92
-        // Android 预览3Q10的时候切到流畅之后 视频播放窗口变大了 
+        // Android 预览3Q10的时候切到流畅之后 视频播放窗口变大了
         //        if (msg.arg1 != 0) {
         //            mRealRatio = (float) msg.arg2 / msg.arg1;
         //        } else {
@@ -3314,7 +3303,7 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
             case ErrorCode.ERROR_INNER_VERIFYCODE_ERROR: {
                 DataManager.getInstance().setDeviceSerialVerifyCode(mCameraInfo.getDeviceSerial(), null);
                 //VerifyCodeInput.VerifyCodeInputDialog(this, this).show();
-                onInputVerifyCode("KEWOMP");
+                onInputVerifyCode(mLocMac.getDeviceKey());
             }
             break;
             case ErrorCode.ERROR_EXTRA_SQUARE_NO_SHARING:
@@ -3645,8 +3634,10 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         //Toast.makeText(this,"初始化网络失败！"+e.getMessage(),Toast.LENGTH_LONG).show();
     }
 
-    private void lefeMove() {
+    private void leftMove() {
         try {
+            stopDjsHandler(1);
+
             if (socketWriter == null) {
                 InitSocket();
             }
@@ -3659,8 +3650,31 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         }
     }
 
+    private void stopDjsHandler(int i) {
+        if(i == 1){
+            if(djstime > -1 && null != djshandler) {
+                djshandler.removeMessages(1);
+
+                djstime = -1;
+
+                new Thread(new OverThread()).start();
+            }
+        }
+        if(i ==2){
+            if(overtime > -1 && null != overhandler) {
+                overhandler.removeMessages(1);
+
+                overtime = -1;
+
+                tvDjs.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
     private void rightMove() {
         try {
+            stopDjsHandler(1);
+
             if (socketWriter == null) {
                 InitSocket();
             }
@@ -3674,6 +3688,8 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 
     private void backWardMove() {
         try {
+            stopDjsHandler(1);
+
             if (socketWriter == null) {
                 InitSocket();
             }
@@ -3687,6 +3703,8 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 
     private void forwardMove() {
         try {
+            stopDjsHandler(1);
+
             if (socketWriter == null) {
                 InitSocket();
             }
@@ -3700,10 +3718,13 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
 
     private void stopMove() {
         try {
+            stopDjsHandler(1);
+
             if (socketWriter != null) {
                 socketWriter.write(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff});
                 socketWriter.flush();
             }
+
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -3765,19 +3786,52 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
         BtnCoin.setVisibility(cvstatus);
     }
 
+    //自动移动倒计时
     final Handler djshandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    djstime--;
-                    tvDjs.setText(" 倒计时：" + String.valueOf(djstime));
+                    if(djstime > 0) {
+                        djstime--;
+                        tvDjs.setText(" 自动移动倒计时：" + String.valueOf(djstime));
+                    }
                     if(djstime == 0){
+                        //BtnRight.performClick();
+                        rightMove();
+                        stopMove();
+                        new Thread(new OverThread()).start();
+                    }
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    //结束倒计时
+    final Handler overhandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    if(overtime > 0) {
+                        overtime--;
+                        tvDjs.setText(" 自动结束倒计时：" + String.valueOf(overtime));
+                    }
+                    if(overtime == 0){
                         tvDjs.setVisibility(View.INVISIBLE);
 
+                        confrim();
+
+                        confrimStop();
+
                         SetControl(0);
+
                         //抢控模式
                         HideOperBtn(2);
+
+                        stopDjsHandler(2);
+
                     }
+                    break;
             }
             super.handleMessage(msg);
         }
@@ -3792,6 +3846,21 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
                     Message message = new Message();
                     message.what = 1;
                     djshandler.sendMessage(message);
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
+    public class OverThread implements Runnable {      // thread
+        @Override
+        public void run() {
+            while (overtime > 0) {
+                try {
+                    Thread.sleep(1000);     // sleep 1000ms
+                    Message message = new Message();
+                    message.what = 1;
+                    overhandler.sendMessage(message);
                 } catch (Exception e) {
                 }
             }
@@ -3840,11 +3909,11 @@ public class EZRealPlayActivity extends Activity implements OnClickListener, Sur
     }
 
     public void getDjsTime(){
-        String strdjstime = Util.getconfig("coin_djs_time");
+        String strdjstime = Util.getconfig("coin_djs_time","");
         if(strdjstime!=null && !strdjstime.equals("")){
             djstime = Integer.valueOf(strdjstime);
         }else{
-            djstime = 20;
+            djstime = 30;
         }
     }
 }

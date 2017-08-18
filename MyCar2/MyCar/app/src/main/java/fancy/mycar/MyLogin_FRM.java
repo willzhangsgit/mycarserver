@@ -2,19 +2,11 @@ package fancy.mycar;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -95,6 +87,7 @@ public class MyLogin_FRM extends Activity {
 		Button btnGeneal = (Button) this.findViewById(R.id.button1);
 		Button btnQQ = (Button) this.findViewById(R.id.button2);
 		Button btnWX = (Button) this.findViewById(R.id.button3);
+		Button btnReg = (Button) this.findViewById(R.id.button4);
 
 		final EditText etPassword = (EditText) this.findViewById(R.id.login_password);
 		final EditText etPhoneno = (EditText) this.findViewById(R.id.login_username);
@@ -113,17 +106,8 @@ public class MyLogin_FRM extends Activity {
 			}
 		});
 
-		TextView tvReg = (TextView) this.findViewById(R.id.txtRegister);
-		SpannableString sst = new SpannableString("注 册");
-		sst.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, sst.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		sst.setSpan(new UnderlineSpan(), 0, sst.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#FF3333"));
-		sst.setSpan(colorSpan, 0, sst.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.4f);
-		sst.setSpan(sizeSpan, 0, sst.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		tvReg.setText(sst);
 
-		tvReg.setOnClickListener(new View.OnClickListener() {
+		btnReg.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				Intent intent = new Intent();
@@ -189,7 +173,8 @@ public class MyLogin_FRM extends Activity {
 			String phoneno = regUser.getPhone();
 			String localip = ActivityUtils.getlocalip(this);
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("accounts", nickname);
+			//jsonObject.put("accounts", nickname);
+			jsonObject.put("accounts", phoneno);
 			jsonObject.put("phone", phoneno);
 			//jsonObject.put("verifyCode", verifycode);
 			jsonObject.put("password", password);

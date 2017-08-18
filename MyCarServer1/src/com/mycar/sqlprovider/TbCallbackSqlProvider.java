@@ -14,6 +14,10 @@ public class TbCallbackSqlProvider {
 			 }else{
 				 if(Integer.valueOf(para.get("flag").toString()) == 2){
 					 WHERE ("device_code='" + para.get("code").toString() + "'");
+				 }else{
+					 if(Integer.valueOf(para.get("flag").toString()) == 3){
+						 WHERE ("order_code='" + para.get("code").toString() + "'");
+					 }					 
 				 }
 			 }
 			}}.toString();

@@ -1,6 +1,5 @@
 package fancy.mycar;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -13,6 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -28,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -62,7 +64,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fancy.mycar.adapter.LeftMenuListAdapter;
 import fancy.mycar.bo.MachineInfo;
+import fancy.mycar.bo.tbInfo;
 import fancy.mycar.ui.cameralist.EZCameraListAdapter;
 import fancy.mycar.ui.cameralist.SelectCameraDialog;
 import fancy.mycar.ui.realplay.EZRealPlayActivity;
@@ -81,7 +85,7 @@ import fancy.mycar.widget.pulltorefresh.PullToRefreshListView;
  * Created by Will on 2017/5/23.
  */
 
-public class MyVideo2 extends Activity implements View.OnClickListener, SelectCameraDialog.CameraItemClick {
+public class MyVideo2 extends FragmentActivity implements View.OnClickListener, SelectCameraDialog.CameraItemClick {
 	protected static final String TAG = "CameraListActivity";
 	public final static int REQUEST_CODE = 100;
 	public final static int RESULT_CODE = 101;
@@ -94,8 +98,10 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	private BroadcastReceiver mReceiver = null;
 
 	private PullToRefreshListView mListView = null;
+	private ListView mLeftMenuListView = null;
 	private View mNoMoreView;
 	private EZCameraListAdapter mAdapter = null;
+	private LeftMenuListAdapter mLMAdapter = null;
 
 	private LinearLayout mNoCameraTipLy = null;
 	private LinearLayout mGetCameraFailTipLy = null;
@@ -120,6 +126,9 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	private int mLoadType = LOAD_MY_DEVICE;
 
 	private String mTocken = "";
+	private DrawerLayout mDrawerLayout = null;
+
+	public tbInfo mtbInfo;
 
 	private Handler mHandler = new Handler() {
 		@Override
@@ -171,6 +180,7 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 		new Thread(tockeninitTask).start();
 		Utils.clearAllNotification(this);
 
+		initTbSystem();
 		testServer();
 	}
 
@@ -194,6 +204,34 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 //			String exerr = ex.getMessage();
 //		}
 
+	}
+
+	private void initTbSystem(){
+		String servname = "http://" + Constant.GwServer + "/MyCarServer1/tbApi/onlinedevice/";
+		JsonRequest request = new JsonObjectRequest(Request.Method.GET, servname, new JSONObject(), new Response.Listener<JSONObject>() {
+			@Override
+			public void onResponse(JSONObject jsonObject) {
+				try {
+					String result = jsonObject.getString("resultCode");
+					if(result.equals("1")){
+						//JSONArray realData = jsonObject.getJSONObject("data").getJSONArray("tb_infos");
+						//List<tbInfo> lmresult = new Gson().fromJson(realData.toString(), new TypeToken<List<tbInfo>>(){}.getType());
+						JSONObject realData = jsonObject.getJSONObject("data").getJSONObject("tb_info");
+						mtbInfo = new Gson().fromJson(realData.toString(), tbInfo.class);
+						Log.v("mtbInfo...",mtbInfo.toString());
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError volleyError) {
+				Log.v("data...","");
+			}
+		});
+
+		EzvizApplication.getReqQueue().add(request);
 	}
 
 	private void initTocken() {
@@ -239,10 +277,14 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 	private void initView() {
 		mMyDevice = (TextView) findViewById(R.id.text_my);
 		mUserBtn = (Button) findViewById(R.id.btn_user);
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.dl_left);
 		mUserBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				popLogoutDialog();
+				//popLogoutDialog();
+
+				//打开抽屉
+				mDrawerLayout.openDrawer(Gravity.LEFT);
 			}
 		});
 		tvUserWelcome = (TextView) findViewById(R.id.text_user);
@@ -369,6 +411,11 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 		mListView.getRefreshableView().addFooterView(mNoMoreView);
 		mListView.setAdapter(mAdapter);
 		mListView.getRefreshableView().removeFooterView(mNoMoreView);
+
+		mLeftMenuListView = (ListView) findViewById(R.id.lvLeftMenu);
+		mLMAdapter = new LeftMenuListAdapter(this.getApplicationContext());
+		mLeftMenuListView.setAdapter(mLMAdapter);
+		mLMAdapter.notifyDataSetChanged();
 
 		mNoCameraTipLy = (LinearLayout) findViewById(R.id.no_camera_tip_ly);
 		mGetCameraFailTipLy = (LinearLayout) findViewById(R.id.get_camera_fail_tip_ly);
@@ -561,7 +608,7 @@ public class MyVideo2 extends Activity implements View.OnClickListener, SelectCa
 							}
 							if(tmac != null) {
 								String scontrol = tmac.getIscontrol().toString();
-								mAdapter.mControlItemMap.put(item.getDeviceSerial(), scontrol);
+								mAdapter.mControlItemMap.put(item.getDeviceSerial(), tmac);
 							}
 
 							mAdapter.notifyDataSetChanged();

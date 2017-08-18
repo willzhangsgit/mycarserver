@@ -53,8 +53,11 @@ public class MachineController {
 			isr = new InputStreamReader(request.getInputStream(), "utf-8");
 			Gson gson = new Gson();
 			MachineInfo u = gson.fromJson(isr, MachineInfo.class);
-
-			int rtn = machineService.updateContorller(u.getUserid().toString(), u.getDeviceSerial(), u.getIscontrol().toString());
+			String conUserid = "";
+			if(u.getIscontrol()==1){
+				conUserid = u.getUserid().toString();
+			}
+			int rtn = machineService.updateContorller(conUserid, u.getDeviceSerial(), u.getIscontrol().toString());
 			return rtn;
 		} catch (Exception e) {
 			e.printStackTrace();

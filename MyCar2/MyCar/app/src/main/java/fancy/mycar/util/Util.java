@@ -711,14 +711,21 @@ public class Util {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-	public static String getconfig(String cname){
+	public static String getconfig(String cname, String ext){
 		ets_cis_config ecc = null;
 		List<ets_cis_config> tecc = EzvizApplication.configs;
 		if(tecc != null  && !cname.equals("")){
 			for(int i=0;i<tecc.size();i++){
-				if(tecc.get(i).getCfg_name().equals(cname)){
-					ecc = tecc.get(i);
-					break;
+				if(ext.equals("")) {
+					if (tecc.get(i).getCfg_name().equals(cname)) {
+						ecc = tecc.get(i);
+						break;
+					}
+				}else{
+					if (tecc.get(i).getCfg_name().equals(cname) && tecc.get(i).getCfg_ext1().equals(ext)){
+						ecc = tecc.get(i);
+						break;
+					}
 				}
 			}
 		}
